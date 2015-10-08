@@ -1,6 +1,9 @@
+#!/usr/bin/python
 __author__ = 'hashbang'
 
 from flask import Flask
+import socket
+import sys
 
 phrases = ["When you come to a fork in the road, take it.",
 "You can observe a lot by just watching.",
@@ -29,4 +32,15 @@ def update():
     return "updated\n"
 
 if __name__ == "__main__":
-    app.run(port=9080)
+ 
+  this_host = None
+  try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('google.com',0))
+    this_host = s.getsockname()[0]
+  except:
+    print "Unexpected error:", sys.exc_info()[0]
+    print "Will attempt to recover ..."
+    this_host = socket.gethostbyname( socket.gethostname() ) 
+
+  app.run(host=this_host,port=9080)
